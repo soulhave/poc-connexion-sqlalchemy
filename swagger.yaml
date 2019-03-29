@@ -1,0 +1,153 @@
+swagger: '2.0'
+info:
+  title: Telephone Book
+  version: "0.0.1-ALPHA"
+  description: Simple example how to use connexion + flask
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  # Contacts
+  /contact:
+    get:
+      tags: [Contact]
+      summary: Get all Contacts
+      parameters:
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          minimum: 0
+          default: 100
+      responses:
+              200:
+                description: Return Contacts
+                schema:
+                  type: object
+                  properties:
+                    contacts:
+                      type: array
+                      items:
+                        $ref: '#/definitions/ContactResult'
+    post:
+      tags: [Contact]
+      summary: Create a Contact
+      parameters:
+        - name: contact
+          in: body
+          schema:
+            $ref: '#/definitions/ContactRequest'
+      responses:
+          200:
+            description: Return the saved contact
+            schema:
+              type: object
+              properties:
+                contacts:
+                  type: object
+                  $ref: '#/definitions/ContactResult'
+          401:
+            description: None object
+
+  /contact/{id}:
+    get:
+      tags: [Contact]
+      summary: Get Contact by Id
+      parameters:
+        - $ref: '#/parameters/id'
+      responses:
+          200:
+            description: Return a contact
+            schema:
+              type: object
+              properties:
+                contacts:
+                  type: object
+                  $ref: '#/definitions/ContactResult'
+          404:
+            description: Contact not found
+
+    put:
+      tags: [Contact]
+      summary: Update contact
+      parameters:
+        - $ref: '#/parameters/id'
+        - name: contact
+          in: body
+          schema:
+            $ref: '#/definitions/ContactRequest'
+      responses:
+          200:
+            description: Update a contact
+            schema:
+              type: object
+              properties:
+                contacts:
+                  type: object
+                  $ref: '#/definitions/ContactResult'
+          401:
+            description: Id is mandatory
+          404:
+            description: Contact not found
+    delete:
+      tags: [Contact]
+      summary: Delete contact
+      parameters:
+        - $ref: '#/parameters/id'
+      responses:
+          204:
+            description: Contact deleted
+          404:
+            description: Contact not found
+
+parameters:
+  id:
+    name: id
+    description: Unique identifier
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+
+definitions:
+  ContactResult:
+    type: object
+    required:
+      - name
+      - birthday
+    properties:
+      id:
+        type: string
+        description: Unique identifier
+        example: "123"
+        readOnly: true
+      name:
+        type: string
+        description: Contact's name
+        example: "Susie"
+        minLength: 1
+        maxLength: 100
+      birthday:
+        type: string
+        format: date
+        description: Creation time
+        example: "2015-07-07"
+  ContactRequest:
+    type: object
+    required:
+      - name
+      - birthday
+    properties:
+      name:
+        type: string
+        description: Contact's name
+        example: "Susie"
+        minLength: 1
+        maxLength: 100
+      birthday:
+        type: string
+        format: date
+        description: Creation time
+        example: "2015-07-07"

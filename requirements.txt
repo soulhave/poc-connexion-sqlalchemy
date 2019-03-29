@@ -1,0 +1,2 @@
+connexion[swagger-ui]==2.2.0
+SQLAlchemy==1.2.14
